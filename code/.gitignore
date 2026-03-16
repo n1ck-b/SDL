@@ -1,7 +1,4 @@
 *.properties
-gradlew
-gradlew.bat
-gradle/
 *.sql
 
 # General OS and editor files
