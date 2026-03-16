@@ -14,21 +14,18 @@ public abstract class StudentMapper {
     @Autowired
     protected GroupRepository groupRepository;
 
+    @Mapping(target = "user.name", source = "name")
+    @Mapping(target = "user.phoneNumber", source = "phoneNumber")
+    @Mapping(target = "user.password", source = "password")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "groups", ignore = true)
     public abstract Student toEntity(StudentCreateDto studentCreateDto);
 
-    @Mapping(target = "groupsId",
-            expression = "java(student.getGroups() != null " +
-                    "? " +
-                    "student.getGroups().stream().map(g -> g.getId()).toList() " +
-                    ": " +
-                    "new ArrayList<>())")
+    @Mapping(target = "name", source = "user.name")
+    @Mapping(target = "phoneNumber", source = "user.phoneNumber")
+    @Mapping(target = "groupsId", expression = "java(student.getGroups() != null ? " +
+            "student.getGroups().stream().map(g -> g.getId()).toList() : new java.util.ArrayList<>())")
     public abstract StudentResponseDto toResponseDto(Student student);
 
-    @Mapping(target = "groupsId",
-            expression = "java(student.getGroups() != null " +
-                    "? " +
-                    "student.getGroups().stream().map(g -> g.getId()).toList() " +
-                    ": " +
-                    "new ArrayList<>())")
     public abstract List<StudentResponseDto> toResponseDtoList(List<Student> students);
 }

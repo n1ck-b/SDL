@@ -3,7 +3,6 @@ package com.bootgussy.dancecenterservice.api.controller;
 import com.bootgussy.dancecenterservice.api.dto.create.LoginRequest;
 import com.bootgussy.dancecenterservice.api.dto.create.RegisterRequest;
 import com.bootgussy.dancecenterservice.api.dto.response.JwtResponse;
-import com.bootgussy.dancecenterservice.core.config.JwtUtils;
 import com.bootgussy.dancecenterservice.core.service.AuthService;
 import com.bootgussy.dancecenterservice.core.service.TokenService;
 import com.bootgussy.dancecenterservice.core.service.UserService;
@@ -75,8 +74,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest signUpRequest) {
-        String result = authService.registerUser(signUpRequest);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<JwtResponse> registerUser(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(authService.registerUser(request));
     }
 }

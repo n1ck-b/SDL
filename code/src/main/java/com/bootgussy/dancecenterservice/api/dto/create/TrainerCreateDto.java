@@ -13,8 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TrainerCreateDto {
     private String name;
-
     private String phoneNumber;
-
+    private String password;
     private String danceStyle;
 }

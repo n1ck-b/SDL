@@ -4,9 +4,12 @@ import com.bootgussy.dancecenterservice.core.config.CacheConfig;
 import com.bootgussy.dancecenterservice.core.exception.AlreadyExistsException;
 import com.bootgussy.dancecenterservice.core.exception.ResourceNotFoundException;
 import com.bootgussy.dancecenterservice.core.model.Trainer;
+import com.bootgussy.dancecenterservice.core.model.User;
 import com.bootgussy.dancecenterservice.core.repository.TrainerRepository;
 import com.bootgussy.dancecenterservice.core.service.TrainerService;
 import java.util.List;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,75 +49,38 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
+    @Transactional
     public Trainer createTrainer(Trainer trainer) {
-        Trainer savedTrainer;
-
-        if (
-                trainer.getUser().getName() == null ||
-                        trainer.getUser().getPhoneNumber() == null ||
-                        trainer.getDanceStyle() == null
-        ) {
-            throw new ResourceNotFoundException("Incorrect JSON. All fields must be filled " +
-                    "(name, phoneNumber, danceStyle).");
+        if (trainer.getUser() == null || trainer.getDanceStyle() == null) {
+            throw new ResourceNotFoundException("Incorrect data: User information and dance style are required.");
         }
 
-        if (trainerRepository.findByNameAndPhoneNumberAndDanceStyle(
-                        trainer.getUser().getName(),
-                        trainer.getUser().getPhoneNumber(),
-                        trainer.getDanceStyle()
-                )
-                .isEmpty()) {
-            savedTrainer = trainerRepository.save(trainer);
-        } else {
-            throw new AlreadyExistsException("Trainer already exists. " +
-                    "Name: " + trainer.getUser().getName() +
-                    ", Phone number: " + trainer.getUser().getPhoneNumber() +
-                    ", Dance style: " + trainer.getDanceStyle());
+        String phone = trainer.getUser().getPhoneNumber();
+        if (trainerRepository.findByUserPhoneNumber(phone).isPresent()) { // Предполагаем наличие метода в репозитории
+            throw new AlreadyExistsException("Trainer with phone number " + phone + " already exists.");
         }
 
+        Trainer savedTrainer = trainerRepository.save(trainer);
         cacheConfig.putTrainer(savedTrainer.getId(), savedTrainer);
 
         return savedTrainer;
     }
 
     @Override
+    @Transactional
     public Trainer updateTrainer(Trainer trainer) {
-        Trainer updatedTrainer;
+        Trainer existingTrainer = trainerRepository.findById(trainer.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Trainer not found with ID: " + trainer.getId()));
 
-        if (
-                trainer.getUser().getName() == null ||
-                        trainer.getUser().getPhoneNumber() == null ||
-                        trainer.getDanceStyle() == null
-        ) {
-            throw new ResourceNotFoundException("Incorrect JSON. All fields must be filled " +
-                    "(name, phoneNumber, danceStyle).");
-        }
+        User user = existingTrainer.getUser();
+        user.setName(trainer.getUser().getName());
+        user.setPhoneNumber(trainer.getUser().getPhoneNumber());
 
-        if (!trainerRepository.findByNameAndPhoneNumberAndDanceStyle(
-                        trainer.getUser().getName(),
-                        trainer.getUser().getPhoneNumber(),
-                        trainer.getDanceStyle()
-                )
-                .isEmpty()) {
-            throw new AlreadyExistsException("Trainer already exists. " +
-                    "Name: " + trainer.getUser().getName() +
-                    ", Phone number: " + trainer.getUser().getPhoneNumber() +
-                    ", Dance style: " + trainer.getDanceStyle());
-        }
+        existingTrainer.setDanceStyle(trainer.getDanceStyle());
 
-        if (trainerRepository.findById(trainer.getId()).isPresent()) {
-            updatedTrainer = trainerRepository.save(trainer);
-        } else {
-            throw new ResourceNotFoundException("The trainer does not exist. " +
-                    "ID: " + trainer.getId() +
-                    ", Name: " + trainer.getUser().getName() +
-                    ", Phone number: " + trainer.getUser().getPhoneNumber() +
-                    ", Dance style: " + trainer.getDanceStyle());
-        }
-
-        cacheConfig.putTrainer(updatedTrainer.getId(), updatedTrainer);
-
-        return updatedTrainer;
+        Trainer updated = trainerRepository.save(existingTrainer);
+        cacheConfig.putTrainer(updated.getId(), updated);
+        return updated;
     }
 
     @Override

@@ -4,9 +4,12 @@ import com.bootgussy.dancecenterservice.core.config.CacheConfig;
 import com.bootgussy.dancecenterservice.core.exception.AlreadyExistsException;
 import com.bootgussy.dancecenterservice.core.exception.ResourceNotFoundException;
 import com.bootgussy.dancecenterservice.core.model.Student;
+import com.bootgussy.dancecenterservice.core.model.User;
 import com.bootgussy.dancecenterservice.core.repository.StudentRepository;
 import com.bootgussy.dancecenterservice.core.service.StudentService;
 import java.util.List;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,62 +49,37 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public Student createStudent(Student student) {
-        Student savedStudent;
-
-        if (
-                student.getUser().getName() == null ||
-                        student.getUser().getPhoneNumber() == null
-        ) {
-            throw new ResourceNotFoundException("Incorrect JSON. All fields must be filled " +
-                    "(name, phoneNumber).");
+        if (student.getUser() == null) {
+            throw new ResourceNotFoundException("User data is missing in Student object");
         }
 
-        if (studentRepository.findByNameAndPhoneNumber(student.getUser().getName(), student.getUser().getPhoneNumber())
-                .isEmpty()) {
-            savedStudent = studentRepository.save(student);
-        } else {
-            throw new AlreadyExistsException("Student already exists." +
-                    " Name: " + student.getUser().getName() +
-                    ", Phone number: " + student.getUser().getPhoneNumber());
+        String phone = student.getUser().getPhoneNumber();
+        if (studentRepository.findByUserPhoneNumber(phone).isPresent()) {
+            throw new AlreadyExistsException("Student with phone number " + phone + " already exists.");
         }
 
+        Student savedStudent = studentRepository.save(student);
         cacheConfig.putStudent(savedStudent.getId(), savedStudent);
 
         return savedStudent;
     }
 
     @Override
+    @Transactional
     public Student updateStudent(Student student) {
-        Student updatedStudent;
+        Student existingStudent = studentRepository.findById(student.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found. ID: " + student.getId()));
 
-        if (
-                student.getUser().getName() == null ||
-                        student.getUser().getPhoneNumber() == null
-        ) {
-            throw new ResourceNotFoundException("Incorrect JSON. All fields must be filled " +
-                    "(name, phoneNumber).");
-        }
+        User user = existingStudent.getUser();
+        user.setName(student.getUser().getName());
+        user.setPhoneNumber(student.getUser().getPhoneNumber());
 
-        if (!studentRepository.findByNameAndPhoneNumber(student.getUser().getName(), student.getUser().getPhoneNumber())
-                .isEmpty()) {
-            throw new AlreadyExistsException("Student already exists." +
-                    " Name: " + student.getUser().getName() +
-                    ", Phone number: " + student.getUser().getPhoneNumber());
-        }
+        Student updated = studentRepository.save(existingStudent);
+        cacheConfig.putStudent(updated.getId(), updated);
 
-        if (studentRepository.findById(student.getId()).isPresent()) {
-            updatedStudent = studentRepository.save(student);
-        } else {
-            throw new ResourceNotFoundException("The student does not exist." +
-                    " ID: " + student.getId() +
-                    ", Name: " + student.getUser().getName() +
-                    ", Phone number: " + student.getUser().getPhoneNumber());
-        }
-
-        cacheConfig.putStudent(updatedStudent.getId(), updatedStudent);
-
-        return updatedStudent;
+        return updated;
     }
 
     @Override

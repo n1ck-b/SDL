@@ -44,7 +44,7 @@ public class Student {
         }
     }
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id")
     private User user;
 }

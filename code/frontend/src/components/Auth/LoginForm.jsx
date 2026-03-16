@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { login } from "../../services/api";
 
 const phoneRegex = /^\+?[0-9]{10,15}$/;
 
@@ -41,11 +42,11 @@ const LoginForm = ({ onSuccess }) => {
         try {
             const user = await login(formData);
 
-            // Просто считаем, что пользователь вошёл
             if (onSuccess) onSuccess(user);
 
         } catch (err) {
-            setError("Неверный логин или пароль");
+            console.error(err);
+            setError(err.message || "Ошибка входа");
         } finally {
             setLoading(false);
         }

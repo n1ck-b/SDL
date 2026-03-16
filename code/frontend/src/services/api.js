@@ -15,6 +15,7 @@ async function request(endpoint, options = {}) {
     const headers = {
         'Content-Type': 'application/json',
         ...options.headers,
+        credentials: 'include'
     };
 
     if (accessToken) {
@@ -27,7 +28,7 @@ async function request(endpoint, options = {}) {
     };
 
     try {
-        const response = await fetch(url, options);
+        const response = await fetch(url, config);
         // console.log(`[API] Статус ответа для ${options.method || 'GET'} ${url}: ${response.status}`);
 
         if (response.status === 401 && endpoint !== '/auth/login') {
@@ -89,15 +90,25 @@ async function request(endpoint, options = {}) {
 
 async function handleRefresh() {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/refresh`, { method: 'POST' });
+        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+
         if (response.ok) {
             const data = await response.json();
-            setAccessToken(data.accessToken); // Сохраняем новый токен в память
+            // Бэкенд должен прислать новый accessToken
+            setAccessToken(data.accessToken);
+            localStorage.setItem('token', data.accessToken);
             return true;
         }
-    } catch (e) {
-        console.error("Session expired");
+    } catch (error) {
+        console.error("Refresh failed", error);
     }
+
+    // Если обновить не удалось — разлогиниваем
+    localStorage.removeItem('token');
+    window.location.href = '/login';
     return false;
 }
 
@@ -384,18 +395,25 @@ export const deleteHall = async (id) => { // НОВАЯ ФУНКЦИЯ
 };
 
 export const login = async (data) => {
-    return await request('/auth/login', {
+    const response = await request('/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
+    if (response.accessToken) {
+        setAccessToken(response.accessToken);
+        localStorage.setItem('token', response.accessToken);
+    }
+    return response;
 };
 
-
 export const register = async (data) => {
-    return await request('/auth/register', {
+    const response = await request('/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
+    if (response.accessToken) {
+        setAccessToken(response.accessToken);
+        localStorage.setItem('token', response.accessToken);
+    }
+    return response;
 };

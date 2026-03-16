@@ -40,7 +40,7 @@ public class Trainer {
     @JsonBackReference
     private List<Group> groups;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id")
     private User user;
 }

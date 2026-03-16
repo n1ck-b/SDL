@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { createStudent } from "../../services/api";
+import {register, setAccessToken} from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const phoneRegex = /^\+?[0-9]{10,15}$/;
 const nameRegex = /^[A-Za-zА-Яа-яЁё\s-]{2,30}$/;
 
 const RegisterForm = ({ onSuccess }) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        name: "",
+        username: "",
         phoneNumber: "",
         password: ""
     });
@@ -18,8 +20,8 @@ const RegisterForm = ({ onSuccess }) => {
     const validate = () => {
         const newErrors = {};
 
-        if (!nameRegex.test(formData.name)) {
-            newErrors.name = "Имя может содержать только буквы";
+        if (!nameRegex.test(formData.username)) {
+            newErrors.username = "Имя может содержать только буквы";
         }
 
         if (!phoneRegex.test(formData.phoneNumber)) {
@@ -50,19 +52,13 @@ const RegisterForm = ({ onSuccess }) => {
         setServerError("");
 
         try {
-            // вызываем новый API для регистрации
-            const newUser = await register({
-                name: formData.name,
-                phoneNumber: formData.phoneNumber,
-                password: formData.password // если сервер ожидает пароль
-            });
+            const response = await register(formData);
 
-            // передаем созданного пользователя наверх, например для закрытия модалки
-            if (onSuccess) onSuccess(newUser);
+            if (onSuccess) onSuccess(response);
+            navigate("/");
 
         } catch (error) {
-            // показываем сообщение об ошибке от API
-            setServerError(error.message || "Ошибка при регистрации");
+            setServerError(error.message);
         } finally {
             setLoading(false);
         }
@@ -73,12 +69,12 @@ const RegisterForm = ({ onSuccess }) => {
             <div className="input-group">
                 <input
                     type="text"
-                    name="name"
+                    name="username"
                     placeholder="Имя"
-                    value={formData.name}
+                    value={formData.username}
                     onChange={handleChange}
                 />
-                {errors.name && <span className="error">{errors.name}</span>}
+                {errors.username && <span className="error">{errors.username}</span>}
             </div>
 
             <div className="input-group">

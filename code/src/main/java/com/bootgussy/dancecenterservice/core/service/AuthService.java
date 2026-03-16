@@ -9,5 +9,5 @@ import org.springframework.http.ResponseCookie;
 public interface AuthService {
     JwtResponse authenticateUser(LoginRequest loginRequest);
     ResponseCookie generateRefreshCookie(Long id);
-    String registerUser(@Valid RegisterRequest signUpRequest);
+    JwtResponse registerUser(@Valid RegisterRequest signUpRequest);
 }

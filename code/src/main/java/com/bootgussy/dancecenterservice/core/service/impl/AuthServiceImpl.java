@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,15 +51,16 @@ public class AuthServiceImpl implements AuthService {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
+    @Override
     @Transactional
-    public String registerUser(RegisterRequest signUpRequest) {
+    public JwtResponse registerUser(RegisterRequest registerRequest) {
         User user = new User();
-        user.setName(signUpRequest.getUsername());
-        //user.setEmail(signUpRequest.email());
-        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        user.setPhoneNumber(signUpRequest.getPhoneNumber());
+        user.setName(registerRequest.getUsername());
+        //user.setEmail(registerRequest.email());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setPhoneNumber(registerRequest.getPhoneNumber());
 
-        /*Set<String> strRoles = signUpRequest.roles();
+        /*Set<String> strRoles = registerRequest.roles();
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null || strRoles.isEmpty()) {
@@ -79,11 +81,29 @@ public class AuthServiceImpl implements AuthService {
 
         userService.createUser(user);
 
-        return "User registered successfully!";
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        registerRequest.getPhoneNumber(),
+                        registerRequest.getPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        User authenticatedUser = (User) authentication.getPrincipal();
+
+        return tokenService.generateAuthResponse(authenticatedUser);
     }
 
 
     public JwtResponse authenticateUser(LoginRequest loginRequest) {
+        UserDetails userDetails = userService.loadUserByUsername(loginRequest.getPhoneNumber());
+
+        String rawPassword = loginRequest.getPassword();
+        String encodedPassword = userDetails.getPassword();
+
+        System.out.println("RAW: [" + rawPassword + "] Length: " + rawPassword.length());
+        System.out.println("ENCODED: [" + encodedPassword + "] Length: " + encodedPassword.length());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getPhoneNumber(),
