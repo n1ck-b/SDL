@@ -44,7 +44,7 @@ const SchedulePage = ({
             <div className="schedule-page-container">
                 <div className="page-header-controls">
                     <h1 className="page-title">Расписание занятий</h1>
-                    {onAddNewScheduleItemClick && (<button className="page-header-button" onClick={() => { console.log("SchedulePage: 'Добавить занятие' button clicked (during load)"); onAddNewScheduleItemClick();}}>Добавить занятие</button>)}
+                    {onAddNewScheduleItemClick && (<button className="btn btn-primary" onClick={() => { console.log("SchedulePage: 'Добавить занятие' button clicked (during load)"); onAddNewScheduleItemClick();}}>Добавить занятие</button>)}
                 </div>
                 <p>Загрузка данных залов...</p>
             </div>
@@ -57,7 +57,7 @@ const SchedulePage = ({
             <div className="schedule-page-container">
                 <div className="page-header-controls">
                     <h1 className="page-title">Расписание занятий</h1>
-                    {onAddNewScheduleItemClick && (<button className="page-header-button" onClick={() => { console.log("SchedulePage: 'Добавить занятие' button clicked (no halls)"); onAddNewScheduleItemClick();}}>Добавить занятие</button>)}
+                    {onAddNewScheduleItemClick && (<button className="btn btn-primary" onClick={() => { console.log("SchedulePage: 'Добавить занятие' button clicked (no halls)"); onAddNewScheduleItemClick();}}>Добавить занятие</button>)}
                 </div>
                 <p>Залы не загружены или отсутствуют. Расписание не может быть отображено.</p>
             </div>
@@ -84,7 +84,7 @@ const SchedulePage = ({
                 <h1 className="page-title">Расписание занятий</h1>
                 {onAddNewScheduleItemClick && (
                     <button
-                        className="page-header-button"
+                        className="btn btn-primary"
                         onClick={() => {
                             console.log("SchedulePage: 'Добавить занятие' button clicked");
                             onAddNewScheduleItemClick();
@@ -101,7 +101,8 @@ const SchedulePage = ({
                         <button
                             key={hall.id}
                             onClick={() => setSelectedHallId(hall.id)}
-                            className={`hall-button ${selectedHallId === hall.id ? 'active' : ''}`}
+                            className={`btn ${selectedHallId === hall.id ? 'btn-primary' : 'btn-secondary'} hall-button`}
+                            style={{marginRight: '12px'}}
                         >
                             {hall.name}
                         </button>

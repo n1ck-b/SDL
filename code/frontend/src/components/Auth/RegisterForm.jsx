@@ -55,7 +55,6 @@ const RegisterForm = ({ onSuccess }) => {
             const response = await register(formData);
 
             if (onSuccess) onSuccess(response);
-            navigate("/");
 
         } catch (error) {
             setServerError(error.message);
@@ -99,7 +98,7 @@ const RegisterForm = ({ onSuccess }) => {
                 {errors.password && <span className="error">{errors.password}</span>}
             </div>
 
-            <button type="submit" className="auth-submit" disabled={loading}>
+            <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
                 {loading ? "Загрузка..." : "Зарегистрироваться"}
             </button>
             {serverError && <div className="server-error">{serverError}</div>}

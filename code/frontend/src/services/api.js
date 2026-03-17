@@ -1,5 +1,5 @@
 // src/services/api.js
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '/api';
 
 let accessToken = null;
 
@@ -14,8 +14,7 @@ async function request(endpoint, options = {}) {
 
     const headers = {
         'Content-Type': 'application/json',
-        ...options.headers,
-        credentials: 'include'
+        ...options.headers
     };
 
     if (accessToken) {
@@ -24,7 +23,8 @@ async function request(endpoint, options = {}) {
 
     const config = {
         ...options,
-        headers: headers
+        headers: headers,
+        credentials: 'include'
     };
 
     try {
@@ -97,7 +97,6 @@ async function handleRefresh() {
 
         if (response.ok) {
             const data = await response.json();
-            // Бэкенд должен прислать новый accessToken
             setAccessToken(data.accessToken);
             localStorage.setItem('token', data.accessToken);
             return true;
@@ -106,11 +105,29 @@ async function handleRefresh() {
         console.error("Refresh failed", error);
     }
 
-    // Если обновить не удалось — разлогиниваем
+    // Если обновить не удалось — зачищаем всё
+    console.warn("Session expired or refresh failed. Clearing storage and redirecting.");
     localStorage.removeItem('token');
+    localStorage.removeItem('userData');
+    setAccessToken(null);
     window.location.href = '/login';
     return false;
 }
+
+export const logoutApi = async () => {
+    try {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+    } catch (error) {
+        console.error("Backend logout failed", error);
+    } finally {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        setAccessToken(null);
+    }
+};
 
 export const fetchScheduleItems = async () => {
     console.log("[API] Attempting to fetch schedule items...");

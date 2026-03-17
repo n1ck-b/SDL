@@ -18,12 +18,12 @@ const HallItem = ({ hall, onEdit, onDelete }) => {
                 <p className="hall-detail">Занятий в расписании: {scheduleItemsCount}</p>
             </div>
             <div className="hall-actions">
-                <button onClick={() => onEdit(hall)} className="btn btn-edit">
+                <button onClick={() => onEdit(hall)} className="btn btn-secondary btn-sm">
                     Редактировать
                 </button>
                 <button
                     onClick={() => onDelete(hall.id)}
-                    className="btn btn-delete"
+                    className="btn btn-danger btn-sm"
                 >
                     Удалить
                 </button>

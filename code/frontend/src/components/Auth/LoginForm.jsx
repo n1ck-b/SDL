@@ -74,7 +74,7 @@ const LoginForm = ({ onSuccess }) => {
                 />
             </div>
 
-            <button type="submit" className="auth-submit" disabled={loading}>
+            <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
                 {loading ? "Загрузка..." : "Войти"}
             </button>
 

@@ -65,7 +65,7 @@ public class AuthController {
         tokenService.deleteToken(refreshToken);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
                 .maxAge(0)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .build();
 
         return ResponseEntity.ok()

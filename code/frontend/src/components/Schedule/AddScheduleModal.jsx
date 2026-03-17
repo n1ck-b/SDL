@@ -174,7 +174,7 @@ const AddScheduleModal = ({
                 <div className="modal-header-custom">
                     <h2>{modalTitle}</h2>
                     {isEditMode && currentItemId && (
-                        <button onClick={handleDeleteClick} className="modal-delete-top-btn" title="Удалить занятие">
+                        <button onClick={handleDeleteClick} className="btn btn-danger btn-sm" title="Удалить занятие">
                              Удалить
                         </button>
                     )}
@@ -268,8 +268,8 @@ const AddScheduleModal = ({
                     </div>
 
                     <div className="modal-actions">
-                        <button onClick={onClose} className="modal-button cancel">Отмена</button>
-                        <button onClick={handleFormSubmit} className="modal-button save">
+                        <button onClick={onClose} type="button" className="btn btn-secondary">Отмена</button>
+                        <button type="submit" className="btn btn-primary">
                             {isEditMode ? 'Сохранить' : 'Создать'}
                         </button>
                     </div>

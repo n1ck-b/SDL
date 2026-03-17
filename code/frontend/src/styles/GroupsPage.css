@@ -63,22 +63,3 @@
 
 /* Уведомления теперь глобальные в main.css, эти можно удалить, если дублируются */
 /* .notification { ... } */
-
-/* Кнопки также могут быть глобальными или специфичными */
-.btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 6px; /* Как на скриншоте */
-    cursor: pointer;
-    font-size: 0.95rem; /* Как на скриншоте */
-    font-weight: 500;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.btn-primary {
-    background-color: #6f42c1; /* Фиолетовый, как на скриншоте */
-    color: white;
-}
-.btn-primary:hover {
-    background-color: #5e37a6;
-}

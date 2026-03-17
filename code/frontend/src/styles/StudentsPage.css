@@ -26,16 +26,6 @@
     font-weight: 600;
 }
 
-.page-header .btn-primary {
-    background-color: #6f42c1;
-    color: white;
-    padding: 10px 18px;
-    font-size: 0.95rem;
-    border-radius: 6px;
-}
-.page-header .btn-primary:hover {
-    background-color: #5e37a6;
-}
 
 
 .search-bar-container {
@@ -57,12 +47,6 @@
     box-shadow: 0 0 0 0.2rem rgba(77, 144, 254, 0.2);
 }
 
-.students-list-container { /* Контейнер для списка студентов */
-    /* Если хотите карточки в несколько колонок: */
-    /* display: grid; */
-    /* grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); */ /* Адаптивные колонки */
-    /* gap: 20px; */
-}
 
 /* Стили для .loading-message, .error-message, .no-items-message могут быть общими */
 /* или скопированы/адаптированы из TrainersPage.css или GroupsPage.css */

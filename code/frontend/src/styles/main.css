@@ -138,3 +138,81 @@ body {
   position: relative; /* Для правильной работы TransitionGroup с абсолютными детьми */
   /* overflow: hidden; */ /* Можно убрать, если .page-container-for-transition будет absolute */
 }
+
+/* Global Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(106, 17, 203, 0.3);
+}
+
+.btn-secondary {
+  background: #f1f2f6;
+  color: #2d3436;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #dfe4ea;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: #ff4757;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.2);
+}
+
+.btn-danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.3);
+}
+
+.btn-outline-white {
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+.btn-outline-white:hover:not(:disabled) {
+  background: #fff;
+  color: #6a11cb;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.btn-block {
+  width: 100%;
+}

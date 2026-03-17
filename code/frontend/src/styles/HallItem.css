@@ -46,32 +46,5 @@
 }
 
 .hall-actions .btn {
-    padding: 6px 12px;
-    font-size: 0.85em;
-    border-radius: 5px;
-    min-width: 110px; /* Чтобы кнопки были одной ширины */
-    text-align: center;
-    width: 120px;
-}
-
-.hall-actions .btn-edit {
-    background-color: #688368;
-    color: #fff;
-    border: 1px solid #688368;
-}
-.hall-actions .btn-edit:hover {
-    background-color: #2f3c2f;
-    border: 1px solid #2f3c2f;
-
-}
-
-.hall-actions .btn-delete {
-    background-color: #dc3545; /* Светло-красный */
-    color: #ffffff; /* Темно-красный текст */
-    border: 1px solid #dc3545;
-}
-.hall-actions .btn-delete:hover {
-    background-color: #c82333;
-    color: #ffffff;
-    border: 1px solid #c82333;
+    min-width: 120px;
 }

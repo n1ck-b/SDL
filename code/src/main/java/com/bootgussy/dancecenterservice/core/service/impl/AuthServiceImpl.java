@@ -17,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,25 +95,24 @@ public class AuthServiceImpl implements AuthService {
 
 
     public JwtResponse authenticateUser(LoginRequest loginRequest) {
-        UserDetails userDetails = userService.loadUserByUsername(loginRequest.getPhoneNumber());
+        System.out.println("Attempting authentication for: " + loginRequest.getPhoneNumber());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getPhoneNumber(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        String rawPassword = loginRequest.getPassword();
-        String encodedPassword = userDetails.getPassword();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User user = (User) authentication.getPrincipal();
+            System.out.println("Authentication successful for: " + loginRequest.getPhoneNumber());
 
-        System.out.println("RAW: [" + rawPassword + "] Length: " + rawPassword.length());
-        System.out.println("ENCODED: [" + encodedPassword + "] Length: " + encodedPassword.length());
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getPhoneNumber(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = (User) authentication.getPrincipal();
-
-        return tokenService.generateAuthResponse(user);
+            return tokenService.generateAuthResponse(user);
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            System.err.println("Authentication failed for " + loginRequest.getPhoneNumber() + ": " + e.getMessage());
+            throw e;
+        }
     }
 
     public ResponseCookie generateRefreshCookie(Long id) {
@@ -123,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
 
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .maxAge(7 * 24 * 60 * 60)
                 .sameSite("Strict")
                 .build();

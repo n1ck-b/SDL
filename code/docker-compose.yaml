@@ -44,7 +44,7 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_DATA_REDIS_PORT=6379
-      - APP_JWT_SECRET=${JWT_SECRET}
+      - APP_JWT_SECRET=${JWT_SECRET:-kz7R2KFJPCmg8fQwag9Z4JHLKM9aXD84uWteCDJYHsX5MW5p84KWpBSfgSNqBPvP}
     depends_on:
       - postgres
       - redis
