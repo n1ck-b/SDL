@@ -13,8 +13,8 @@ Interface language: JavaScript/React
 
 [Diagrams]()
 
-[Java code](https://github.com/DanutaGagua/Personal-film-collection-manager/tree/master/code/java%20classes)  
-[JavaScript/React code](https://github.com/DanutaGagua/Personal-film-collection-manager/tree/master/code/layout%20xml) 
+[Java code](https://github.com/bootgussy/zhcrpo/tree/main/code/src)
+[JavaScript/React code](https://github.com/bootgussy/zhcrpo/tree/main/code/frontend) 
 
 Used patterns:  
 
